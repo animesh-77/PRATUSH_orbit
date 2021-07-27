@@ -1,0 +1,4 @@
+with a ceratinf set of initial keplerian orbital parameters
+
+inc changed from 0-5 in steps of 0.5
+raan changed from 0-360 in steps of 10
