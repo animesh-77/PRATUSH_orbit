@@ -1,0 +1,2 @@
+s/c given some initial parameters and then propogated for 10 degrees at a time for 730 days
+required parameters stored in a .csv file and then plots created using jupyter notebook
