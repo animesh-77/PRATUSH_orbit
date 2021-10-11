@@ -1,0 +1,254 @@
+%General Mission Analysis Tool(GMAT) Script
+%Created: 2021-07-01 21:13:42
+
+
+%----------------------------------------
+%---------- User-Modified Default Celestial Bodies
+%----------------------------------------
+
+GMAT Luna.Flattening = 0.0012;
+
+%----------------------------------------
+%---------- Spacecraft
+%----------------------------------------
+
+Create Spacecraft lunar_probe;
+GMAT lunar_probe.DateFormat = UTCGregorian;
+GMAT lunar_probe.Epoch = '23 Dec 2023 00:00:00.000';
+GMAT lunar_probe.CoordinateSystem = Luna_MJ2000;
+GMAT lunar_probe.DisplayStateType = Keplerian;
+GMAT lunar_probe.SMA = 1859.299999999965;
+GMAT lunar_probe.ECC = 0.002043779999990458;
+GMAT lunar_probe.INC = 0;
+GMAT lunar_probe.RAAN = 0;
+GMAT lunar_probe.AOP = 180;
+GMAT lunar_probe.TA = 0;
+GMAT lunar_probe.DryMass = 500;
+GMAT lunar_probe.Cd = 2.2;
+GMAT lunar_probe.Cr = 1.8;
+GMAT lunar_probe.DragArea = 15;
+GMAT lunar_probe.SRPArea = 1;
+GMAT lunar_probe.SPADDragScaleFactor = 1;
+GMAT lunar_probe.SPADSRPScaleFactor = 1;
+GMAT lunar_probe.NAIFId = -10004001;
+GMAT lunar_probe.NAIFIdReferenceFrame = -9004001;
+GMAT lunar_probe.OrbitColor = Red;
+GMAT lunar_probe.TargetColor = Teal;
+GMAT lunar_probe.OrbitErrorCovariance = [ 1e+70 0 0 0 0 0 ; 0 1e+70 0 0 0 0 ; 0 0 1e+70 0 0 0 ; 0 0 0 1e+70 0 0 ; 0 0 0 0 1e+70 0 ; 0 0 0 0 0 1e+70 ];
+GMAT lunar_probe.CdSigma = 1e+70;
+GMAT lunar_probe.CrSigma = 1e+70;
+GMAT lunar_probe.Id = 'SatId';
+GMAT lunar_probe.Attitude = CoordinateSystemFixed;
+GMAT lunar_probe.SPADSRPInterpolationMethod = Bilinear;
+GMAT lunar_probe.SPADSRPScaleFactorSigma = 1e+70;
+GMAT lunar_probe.SPADDragInterpolationMethod = Bilinear;
+GMAT lunar_probe.SPADDragScaleFactorSigma = 1e+70;
+GMAT lunar_probe.ModelFile = 'aura.3ds';
+GMAT lunar_probe.ModelOffsetX = 0;
+GMAT lunar_probe.ModelOffsetY = 0;
+GMAT lunar_probe.ModelOffsetZ = 0;
+GMAT lunar_probe.ModelRotationX = 0;
+GMAT lunar_probe.ModelRotationY = 0;
+GMAT lunar_probe.ModelRotationZ = 0;
+GMAT lunar_probe.ModelScale = 1;
+GMAT lunar_probe.AttitudeDisplayStateType = 'Quaternion';
+GMAT lunar_probe.AttitudeRateDisplayStateType = 'AngularVelocity';
+GMAT lunar_probe.AttitudeCoordinateSystem = EarthMJ2000Eq;
+GMAT lunar_probe.EulerAngleSequence = '321';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%----------------------------------------
+%---------- ForceModels
+%----------------------------------------
+
+Create ForceModel lunar_probe_prop_ForceModel;
+GMAT lunar_probe_prop_ForceModel.CentralBody = Luna;
+GMAT lunar_probe_prop_ForceModel.PrimaryBodies = {Luna};
+GMAT lunar_probe_prop_ForceModel.PointMasses = {Earth, Sun};
+GMAT lunar_probe_prop_ForceModel.Drag = None;
+GMAT lunar_probe_prop_ForceModel.SRP = Off;
+GMAT lunar_probe_prop_ForceModel.RelativisticCorrection = Off;
+GMAT lunar_probe_prop_ForceModel.ErrorControl = RSSStep;
+GMAT lunar_probe_prop_ForceModel.GravityField.Luna.Degree = 100;
+GMAT lunar_probe_prop_ForceModel.GravityField.Luna.Order = 100;
+GMAT lunar_probe_prop_ForceModel.GravityField.Luna.StmLimit = 100;
+GMAT lunar_probe_prop_ForceModel.GravityField.Luna.PotentialFile = 'D:\softwares\GMAT\data\gravity\luna\grgm900c.cof';
+GMAT lunar_probe_prop_ForceModel.GravityField.Luna.TideModel = 'None';
+
+%----------------------------------------
+%---------- Propagators
+%----------------------------------------
+
+Create Propagator lunar_probe_prop;
+GMAT lunar_probe_prop.FM = lunar_probe_prop_ForceModel;
+GMAT lunar_probe_prop.Type = PrinceDormand78;
+GMAT lunar_probe_prop.InitialStepSize = 60;
+GMAT lunar_probe_prop.Accuracy = 9.999999999999999e-12;
+GMAT lunar_probe_prop.MinStep = 0;
+GMAT lunar_probe_prop.MaxStep = 2700;
+GMAT lunar_probe_prop.MaxStepAttempts = 50;
+GMAT lunar_probe_prop.StopIfAccuracyIsViolated = true;
+
+%----------------------------------------
+%---------- Coordinate Systems
+%----------------------------------------
+
+Create CoordinateSystem LunaFixed;
+GMAT LunaFixed.Origin = Luna;
+GMAT LunaFixed.Axes = BodyFixed;
+
+Create CoordinateSystem Luna_MJ2000;
+GMAT Luna_MJ2000.Origin = Luna;
+GMAT Luna_MJ2000.Axes = MJ2000Eq;
+
+%----------------------------------------
+%---------- Subscribers
+%----------------------------------------
+
+
+
+
+Create ReportFile final;
+GMAT final.SolverIterations = Current;
+GMAT final.UpperLeft = [ 0.05411764705882353 0.1136653895274585 ];
+GMAT final.Size = [ 0.5970588235294118 0.7931034482758621 ];
+GMAT final.RelativeZOrder = 1070;
+GMAT final.Maximized = false;
+GMAT final.Filename = 'D:\softwares\GMAT\samples\animesh\orbital paraterers variation\only_inc\inc2.csv';
+GMAT final.Precision = 16;
+GMAT final.WriteHeaders = true;
+GMAT final.LeftJustify = On;
+GMAT final.ZeroFill = Off;
+GMAT final.FixedWidth = false;
+GMAT final.Delimiter = ',';
+GMAT final.ColumnWidth = 23;
+GMAT final.WriteReport = true;
+
+%----------------------------------------
+%---------- Arrays, Variables, Strings
+%----------------------------------------
+Create Variable inc raan sma ecc;
+Create String epoch msg;
+GMAT msg = '#################################################################';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%----------------------------------------
+%---------- Mission Sequence
+%----------------------------------------
+
+BeginMissionSequence;
+
+GMAT epoch = '23 Dec 2023 00:00:00.000';
+GMAT sma = 1859.3;
+GMAT ecc = 0.00204378;
+
+Write msg { Style = Concise, LogFile = false, MessageWindow = true }
+
+For inc = 0.0:2.5:91;
+   
+   GMAT lunar_probe.DateFormat = UTCGregorian;
+   GMAT lunar_probe.Epoch = epoch;
+   GMAT lunar_probe.CoordinateSystem = Luna_MJ2000;
+   GMAT lunar_probe.DisplayStateType = Keplerian;
+   GMAT lunar_probe.SMA = sma;
+   GMAT lunar_probe.ECC = ecc;
+   GMAT lunar_probe.INC = inc;
+   GMAT lunar_probe.RAAN = 0;
+   GMAT lunar_probe.AOP = 180;
+   GMAT lunar_probe.TA = 0; % s/c initailly at perigee which is at farside of moon
+   
+   Write epoch inc { Style = Concise, LogFile = false, MessageWindow = true }
+   
+   While lunar_probe.Luna.Altitude > 20 & lunar_probe.ElapsedDays < 60
+      
+      Propagate lunar_probe_prop(lunar_probe) {lunar_probe.Luna.Apoapsis};
+      Write inc lunar_probe.Luna.Altitude lunar_probe.ElapsedDays { Style = Concise, LogFile = false, MessageWindow = false, ReportFile = final }
+      
+      Propagate lunar_probe_prop(lunar_probe) {lunar_probe.Luna.Periapsis};
+      Write inc lunar_probe.Luna.Altitude lunar_probe.ElapsedDays { Style = Concise, LogFile = false, MessageWindow = false, ReportFile = final }
+   
+   
+   EndWhile;
+
+
+EndFor;
+
+Write msg { Style = Concise, LogFile = false, MessageWindow = true }
