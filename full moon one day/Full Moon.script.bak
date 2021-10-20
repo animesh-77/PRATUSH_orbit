@@ -1,0 +1,405 @@
+%General Mission Analysis Tool(GMAT) Script
+%Created: 2021-07-01 21:13:42
+
+
+%----------------------------------------
+%---------- User-Modified Default Celestial Bodies
+%----------------------------------------
+
+GMAT Luna.Flattening = 0.0012;
+
+%----------------------------------------
+%---------- Spacecraft
+%----------------------------------------
+
+Create Spacecraft lunar_probe;
+GMAT lunar_probe.DateFormat = UTCGregorian;
+GMAT lunar_probe.Epoch = '26 Jan 2024 00:00:00.000';
+GMAT lunar_probe.CoordinateSystem = LunaFixed;
+GMAT lunar_probe.DisplayStateType = Keplerian;
+GMAT lunar_probe.SMA = 1825.899999999956;
+GMAT lunar_probe.ECC = 0.02049999999999569;
+GMAT lunar_probe.INC = 1.500000000000044;
+GMAT lunar_probe.RAAN = 0;
+GMAT lunar_probe.AOP = 180;
+GMAT lunar_probe.TA = 180;
+GMAT lunar_probe.DryMass = 500;
+GMAT lunar_probe.Cd = 2.2;
+GMAT lunar_probe.Cr = 1.8;
+GMAT lunar_probe.DragArea = 15;
+GMAT lunar_probe.SRPArea = 1;
+GMAT lunar_probe.SPADDragScaleFactor = 1;
+GMAT lunar_probe.SPADSRPScaleFactor = 1;
+GMAT lunar_probe.NAIFId = -10004001;
+GMAT lunar_probe.NAIFIdReferenceFrame = -9004001;
+GMAT lunar_probe.OrbitColor = Red;
+GMAT lunar_probe.TargetColor = Teal;
+GMAT lunar_probe.OrbitErrorCovariance = [ 1e+70 0 0 0 0 0 ; 0 1e+70 0 0 0 0 ; 0 0 1e+70 0 0 0 ; 0 0 0 1e+70 0 0 ; 0 0 0 0 1e+70 0 ; 0 0 0 0 0 1e+70 ];
+GMAT lunar_probe.CdSigma = 1e+70;
+GMAT lunar_probe.CrSigma = 1e+70;
+GMAT lunar_probe.Id = 'SatId';
+GMAT lunar_probe.Attitude = CoordinateSystemFixed;
+GMAT lunar_probe.SPADSRPInterpolationMethod = Bilinear;
+GMAT lunar_probe.SPADSRPScaleFactorSigma = 1e+70;
+GMAT lunar_probe.SPADDragInterpolationMethod = Bilinear;
+GMAT lunar_probe.SPADDragScaleFactorSigma = 1e+70;
+GMAT lunar_probe.ModelFile = 'aura.3ds';
+GMAT lunar_probe.ModelOffsetX = 0;
+GMAT lunar_probe.ModelOffsetY = 0;
+GMAT lunar_probe.ModelOffsetZ = 0;
+GMAT lunar_probe.ModelRotationX = 0;
+GMAT lunar_probe.ModelRotationY = 0;
+GMAT lunar_probe.ModelRotationZ = 0;
+GMAT lunar_probe.ModelScale = 1;
+GMAT lunar_probe.AttitudeDisplayStateType = 'Quaternion';
+GMAT lunar_probe.AttitudeRateDisplayStateType = 'AngularVelocity';
+GMAT lunar_probe.AttitudeCoordinateSystem = EarthMJ2000Eq;
+GMAT lunar_probe.EulerAngleSequence = '321';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%----------------------------------------
+%---------- ForceModels
+%----------------------------------------
+
+Create ForceModel lunar_probe_prop_ForceModel;
+GMAT lunar_probe_prop_ForceModel.CentralBody = Luna;
+GMAT lunar_probe_prop_ForceModel.PrimaryBodies = {Luna};
+GMAT lunar_probe_prop_ForceModel.PointMasses = {Earth, Jupiter, Mars, Mercury, Neptune, Pluto, Saturn, Sun, Uranus, Venus};
+GMAT lunar_probe_prop_ForceModel.Drag = None;
+GMAT lunar_probe_prop_ForceModel.SRP = Off;
+GMAT lunar_probe_prop_ForceModel.RelativisticCorrection = Off;
+GMAT lunar_probe_prop_ForceModel.ErrorControl = RSSStep;
+GMAT lunar_probe_prop_ForceModel.GravityField.Luna.Degree = 100;
+GMAT lunar_probe_prop_ForceModel.GravityField.Luna.Order = 100;
+GMAT lunar_probe_prop_ForceModel.GravityField.Luna.StmLimit = 100;
+GMAT lunar_probe_prop_ForceModel.GravityField.Luna.PotentialFile = 'D:\softwares\GMAT\data\gravity\luna\grgm900c.cof';
+GMAT lunar_probe_prop_ForceModel.GravityField.Luna.TideModel = 'None';
+
+%----------------------------------------
+%---------- Propagators
+%----------------------------------------
+
+Create Propagator lunar_probe_prop;
+GMAT lunar_probe_prop.FM = lunar_probe_prop_ForceModel;
+GMAT lunar_probe_prop.Type = PrinceDormand78;
+GMAT lunar_probe_prop.InitialStepSize = 60;
+GMAT lunar_probe_prop.Accuracy = 9.999999999999999e-12;
+GMAT lunar_probe_prop.MinStep = 0;
+GMAT lunar_probe_prop.MaxStep = 2700;
+GMAT lunar_probe_prop.MaxStepAttempts = 50;
+GMAT lunar_probe_prop.StopIfAccuracyIsViolated = true;
+
+%----------------------------------------
+%---------- Coordinate Systems
+%----------------------------------------
+
+Create CoordinateSystem LunaFixed;
+GMAT LunaFixed.Origin = Luna;
+GMAT LunaFixed.Axes = BodyFixed;
+
+Create CoordinateSystem Earth_X;
+GMAT Earth_X.Origin = Luna;
+GMAT Earth_X.Axes = ObjectReferenced;
+GMAT Earth_X.XAxis = -R;
+GMAT Earth_X.ZAxis = N;
+GMAT Earth_X.Primary = Earth;
+GMAT Earth_X.Secondary = Luna;
+
+Create CoordinateSystem Sun_X;
+GMAT Sun_X.Origin = Luna;
+GMAT Sun_X.Axes = ObjectReferenced;
+GMAT Sun_X.XAxis = -R;
+GMAT Sun_X.ZAxis = N;
+GMAT Sun_X.Primary = Sun;
+GMAT Sun_X.Secondary = Luna;
+
+Create CoordinateSystem Moon_IN;
+GMAT Moon_IN.Origin = Luna;
+GMAT Moon_IN.Axes = BodyInertial;
+
+%----------------------------------------
+%---------- Subscribers
+%----------------------------------------
+
+Create OrbitView Lunar_view;
+GMAT Lunar_view.SolverIterations = Current;
+GMAT Lunar_view.UpperLeft = [ 0.1488235294117647 0.1031941031941032 ];
+GMAT Lunar_view.Size = [ 0.8 0.8501228501228502 ];
+GMAT Lunar_view.RelativeZOrder = 43;
+GMAT Lunar_view.Maximized = true;
+GMAT Lunar_view.Add = {lunar_probe, Earth, Luna, Sun};
+GMAT Lunar_view.CoordinateSystem = LunaFixed;
+GMAT Lunar_view.DrawObject = [ true true true true ];
+GMAT Lunar_view.DataCollectFrequency = 1;
+GMAT Lunar_view.UpdatePlotFrequency = 50;
+GMAT Lunar_view.NumPointsToRedraw = 0;
+GMAT Lunar_view.ShowPlot = false;
+GMAT Lunar_view.MaxPlotPoints = 2000;
+GMAT Lunar_view.ShowLabels = true;
+GMAT Lunar_view.ViewPointReference = Luna;
+GMAT Lunar_view.ViewPointVector = [ 30000 0 0 ];
+GMAT Lunar_view.ViewDirection = Earth;
+GMAT Lunar_view.ViewScaleFactor = 1;
+GMAT Lunar_view.ViewUpCoordinateSystem = EarthMJ2000Eq;
+GMAT Lunar_view.ViewUpAxis = Z;
+GMAT Lunar_view.EclipticPlane = Off;
+GMAT Lunar_view.XYPlane = On;
+GMAT Lunar_view.WireFrame = Off;
+GMAT Lunar_view.Axes = On;
+GMAT Lunar_view.Grid = Off;
+GMAT Lunar_view.SunLine = Off;
+GMAT Lunar_view.UseInitialView = On;
+GMAT Lunar_view.StarCount = 7000;
+GMAT Lunar_view.EnableStars = On;
+GMAT Lunar_view.EnableConstellations = On;
+
+Create GroundTrackPlot lunar_surface_plot;
+GMAT lunar_surface_plot.SolverIterations = Current;
+GMAT lunar_surface_plot.UpperLeft = [ 0.1752941176470588 0.2063882063882064 ];
+GMAT lunar_surface_plot.Size = [ 0.5 0.4496314496314496 ];
+GMAT lunar_surface_plot.RelativeZOrder = 103;
+GMAT lunar_surface_plot.Maximized = false;
+GMAT lunar_surface_plot.Add = {lunar_probe, Earth};
+GMAT lunar_surface_plot.DataCollectFrequency = 1;
+GMAT lunar_surface_plot.UpdatePlotFrequency = 50;
+GMAT lunar_surface_plot.NumPointsToRedraw = 0;
+GMAT lunar_surface_plot.ShowPlot = false;
+GMAT lunar_surface_plot.MaxPlotPoints = 200;
+GMAT lunar_surface_plot.CentralBody = Luna;
+GMAT lunar_surface_plot.TextureMap = 'D:\softwares\GMAT\data\graphics\texture\moon-4k.png';
+
+Create ReportFile final;
+GMAT final.SolverIterations = Current;
+GMAT final.UpperLeft = [ 0.05411764705882353 0.1136653895274585 ];
+GMAT final.Size = [ 0.5970588235294118 0.7931034482758621 ];
+GMAT final.RelativeZOrder = 1070;
+GMAT final.Maximized = false;
+GMAT final.Filename = 'D:\softwares\GMAT\samples\animesh\DARE orbit\for data\Longer Propogation\Epoch 2023\cone calc\Full Moon\26Jan2024_1days.csv';
+GMAT final.Precision = 16;
+GMAT final.WriteHeaders = true;
+GMAT final.LeftJustify = On;
+GMAT final.ZeroFill = Off;
+GMAT final.FixedWidth = false;
+GMAT final.Delimiter = ',';
+GMAT final.ColumnWidth = 23;
+GMAT final.WriteReport = true;
+
+Create XYPlot inc_vs_time;
+GMAT inc_vs_time.SolverIterations = Current;
+GMAT inc_vs_time.UpperLeft = [ 0.2294117647058823 0.1756756756756757 ];
+GMAT inc_vs_time.Size = [ 0.5 0.4496314496314496 ];
+GMAT inc_vs_time.RelativeZOrder = 63;
+GMAT inc_vs_time.Maximized = false;
+GMAT inc_vs_time.XVariable = times;
+GMAT inc_vs_time.YVariables = {inc};
+GMAT inc_vs_time.ShowGrid = true;
+GMAT inc_vs_time.ShowPlot = false;
+
+Create OrbitView earth_x;
+GMAT earth_x.SolverIterations = Current;
+GMAT earth_x.UpperLeft = [ 0.000588235294117647 0 ];
+GMAT earth_x.Size = [ 0.8 0.8501228501228502 ];
+GMAT earth_x.RelativeZOrder = 148;
+GMAT earth_x.Maximized = false;
+GMAT earth_x.Add = {lunar_probe, Earth, Sun};
+GMAT earth_x.CoordinateSystem = Earth_X;
+GMAT earth_x.DrawObject = [ true true true ];
+GMAT earth_x.DataCollectFrequency = 1;
+GMAT earth_x.UpdatePlotFrequency = 50;
+GMAT earth_x.NumPointsToRedraw = 0;
+GMAT earth_x.ShowPlot = false;
+GMAT earth_x.MaxPlotPoints = 20000;
+GMAT earth_x.ShowLabels = true;
+GMAT earth_x.ViewPointReference = Luna;
+GMAT earth_x.ViewPointVector = [ 30000 0 0 ];
+GMAT earth_x.ViewDirection = Earth;
+GMAT earth_x.ViewScaleFactor = 1;
+GMAT earth_x.ViewUpCoordinateSystem = EarthMJ2000Eq;
+GMAT earth_x.ViewUpAxis = Z;
+GMAT earth_x.EclipticPlane = Off;
+GMAT earth_x.XYPlane = On;
+GMAT earth_x.WireFrame = Off;
+GMAT earth_x.Axes = On;
+GMAT earth_x.Grid = Off;
+GMAT earth_x.SunLine = Off;
+GMAT earth_x.UseInitialView = On;
+GMAT earth_x.StarCount = 7000;
+GMAT earth_x.EnableStars = On;
+GMAT earth_x.EnableConstellations = On;
+
+Create OrbitView sun_x;
+GMAT sun_x.SolverIterations = Current;
+GMAT sun_x.UpperLeft = [ 0.1388235294117647 0.1437346437346437 ];
+GMAT sun_x.Size = [ 0.8 0.8501228501228502 ];
+GMAT sun_x.RelativeZOrder = 144;
+GMAT sun_x.Maximized = false;
+GMAT sun_x.Add = {lunar_probe, Earth, Sun};
+GMAT sun_x.CoordinateSystem = Sun_X;
+GMAT sun_x.DrawObject = [ true true true ];
+GMAT sun_x.DataCollectFrequency = 1;
+GMAT sun_x.UpdatePlotFrequency = 50;
+GMAT sun_x.NumPointsToRedraw = 0;
+GMAT sun_x.ShowPlot = false;
+GMAT sun_x.MaxPlotPoints = 20000;
+GMAT sun_x.ShowLabels = true;
+GMAT sun_x.ViewPointReference = Luna;
+GMAT sun_x.ViewPointVector = [ 30000 0 0 ];
+GMAT sun_x.ViewDirection = Sun;
+GMAT sun_x.ViewScaleFactor = 1;
+GMAT sun_x.ViewUpCoordinateSystem = EarthMJ2000Eq;
+GMAT sun_x.ViewUpAxis = Z;
+GMAT sun_x.EclipticPlane = Off;
+GMAT sun_x.XYPlane = On;
+GMAT sun_x.WireFrame = Off;
+GMAT sun_x.Axes = On;
+GMAT sun_x.Grid = Off;
+GMAT sun_x.SunLine = Off;
+GMAT sun_x.UseInitialView = On;
+GMAT sun_x.StarCount = 7000;
+GMAT sun_x.EnableStars = On;
+GMAT sun_x.EnableConstellations = On;
+
+Create ReportFile header;
+GMAT header.SolverIterations = Current;
+GMAT header.UpperLeft = [ 0 0 ];
+GMAT header.Size = [ 0 0 ];
+GMAT header.RelativeZOrder = 0;
+GMAT header.Maximized = false;
+GMAT header.Filename = 'D:\softwares\GMAT\samples\animesh\DARE orbit\for data\Longer Propogation\Epoch 2023\cone calc\Full Moon\Header.txt';
+GMAT header.Precision = 16;
+GMAT header.WriteHeaders = true;
+GMAT header.LeftJustify = On;
+GMAT header.ZeroFill = Off;
+GMAT header.FixedWidth = true;
+GMAT header.Delimiter = ',';
+GMAT header.ColumnWidth = 23;
+GMAT header.WriteReport = true;
+
+%----------------------------------------
+%---------- Arrays, Variables, Strings
+%----------------------------------------
+Create Variable alt_initial inc times raan sma ecc aop long_now long_next;
+Create String epoch msg msg2;
+GMAT inc = 26.5;
+GMAT times = 1;
+GMAT msg = '#################################################################';
+
+
+
+
+
+
+
+
+%----------------------------------------
+%---------- Mission Sequence
+%----------------------------------------
+
+BeginMissionSequence;
+
+
+
+
+Write msg { Style = Concise, LogFile = false, MessageWindow = true }
+Write lunar_probe.Epoch { Style = Concise, LogFile = false, MessageWindow = true }
+Write lunar_probe.ElapsedSecs lunar_probe.ElapsedDays lunar_probe.Luna.Altitude lunar_probe.Luna.Longitude lunar_probe.Earth_X.RA lunar_probe.Sun_X.RA lunar_probe.Luna.Latitude lunar_probe.Earth_X.DEC lunar_probe.Sun_X.DEC lunar_probe.LunaFixed.VMAG lunar_probe.Earth_X.VMAG lunar_probe.Sun_X.VMAG { Style = Concise, LogFile = false, MessageWindow = false, ReportFile = header }
+
+
+While lunar_probe.ElapsedDays <= 1
+   
+   GMAT long_now = lunar_probe.Luna.Longitude;
+   GMAT long_next = long_now+ 2;
+   Write lunar_probe.ElapsedSecs lunar_probe.ElapsedDays lunar_probe.Luna.Altitude lunar_probe.Luna.Longitude lunar_probe.Earth_X.RA lunar_probe.Sun_X.RA lunar_probe.Luna.Latitude lunar_probe.Earth_X.DEC lunar_probe.Sun_X.DEC lunar_probe.LunaFixed.VMAG lunar_probe.Earth_X.VMAG lunar_probe.Sun_X.VMAG { Style = Concise, LogFile = false, MessageWindow = false, ReportFile = final }
+   
+   
+   Propagate lunar_probe_prop(lunar_probe) {lunar_probe.Luna.Longitude = long_next, StopTolerance = 0.1, OrbitColor = [12 23 243]};
+   Write lunar_probe.Epoch { Style = Concise, LogFile = false, MessageWindow = true }
+   GMAT times = times+ 1;
+EndWhile;
+
+
+
+%Next part is to make sure the simulation does not end when the s/c is on far side
+
+Write lunar_probe.Luna.Longitude { Style = Concise, LogFile = false, MessageWindow = true }
+Write lunar_probe.Epoch { Style = Concise, LogFile = false, MessageWindow = true }
+
+GMAT long_now = abs(lunar_probe.Luna.Longitude);
+If long_now > 90
+   GMAT msg2 = 'Extension Used';
+   Write msg2 { Style = Concise, LogFile = false, MessageWindow = true }
+   
+   While long_now > 70
+      GMAT long_now = lunar_probe.Luna.Longitude;
+      GMAT long_next = long_now+ 2;
+      Write lunar_probe.ElapsedSecs lunar_probe.ElapsedDays lunar_probe.Luna.Altitude lunar_probe.Luna.Longitude lunar_probe.Earth_X.RA lunar_probe.Sun_X.RA lunar_probe.Luna.Latitude lunar_probe.Earth_X.DEC lunar_probe.Sun_X.DEC lunar_probe.LunaFixed.VMAG lunar_probe.Earth_X.VMAG lunar_probe.Sun_X.VMAG { Style = Concise, LogFile = false, MessageWindow = false, ReportFile = final }
+      
+      Propagate lunar_probe_prop(lunar_probe) {lunar_probe.Luna.Longitude = long_next, StopTolerance = 0.1, OrbitColor = [12 23 243]};
+      GMAT long_now = abs(lunar_probe.Luna.Longitude);
+   EndWhile;
+   
+   GMAT msg2 = 'Extension Over';
+   Write msg2 { Style = Concise, LogFile = false, MessageWindow = true }
+   Write lunar_probe.Luna.Longitude { Style = Concise, LogFile = false, MessageWindow = true }
+   
+   
+   GMAT times = times+ 1;
+EndIf;
+
+Write lunar_probe.Epoch { Style = Concise, LogFile = false, MessageWindow = true }
+Write msg { Style = Concise, LogFile = false, MessageWindow = true }
