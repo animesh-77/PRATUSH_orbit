@@ -10,4 +10,4 @@
 7) "full moon one day"- to simulate spacecraft for one day only (on a full moon)
 8) "lunar month"- to simulate the spacecraft for 1 lunar month (new moon to new moon)
 
-9) "image"s - contains images used in some notebooks. 
+9) "images" - contains images used in some notebooks. 
